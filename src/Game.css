@@ -1,0 +1,7 @@
+.slot {
+  width: 100px;
+  height: 150px;
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  margin: 10px;
+}

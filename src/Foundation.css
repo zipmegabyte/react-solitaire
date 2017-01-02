@@ -1,0 +1,29 @@
+.foundation {
+  border: 6px solid #4fba5a;
+  background-color: #34a249;
+}
+.foundation:before {
+  text-align: center;
+  display: block;
+  font-size: 60px;
+  line-height: 154px;
+  color: #4fba5a;
+}
+
+.foundation.♥:before {
+  content: '♥';
+}
+
+.foundation.♠:before {
+  content: '♠';
+  color: #2b7b3b;
+}
+
+.foundation.♣:before {
+  content: '♣';
+  color: #2b7b3b;
+}
+
+.foundation.♦:before {
+  content: '♦';
+}

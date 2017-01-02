@@ -1,0 +1,13 @@
+.game-board {
+  display: flex;
+  flex-direction: row;
+  background-color: #2b7b3b;
+  width: 1080px;
+  margin: 0 auto;
+}
+
+.tableau-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #34a249;
+}
