@@ -7,6 +7,7 @@ import Tableau from './Tableau';
 import Foundation from './Foundation';
 import Stock from './Stock';
 import Waste from './Waste';
+import UndoButton from './UndoButton';
 
 class Board extends Component {
 
@@ -18,6 +19,7 @@ class Board extends Component {
 
     this.state = {
       cards: cards.slice(),
+      historyLength: 0,
       waste: [],
       foundations: suits.reduce((result, item) => {
         result[item] = [];
@@ -26,7 +28,9 @@ class Board extends Component {
       tableau: [],
       stock: cards,
       score: 0
-    }
+    };
+
+    this.history = [];
 
     while (count++ < 7) {
       const cardsInTableau = cards.splice(count * -1);
@@ -35,6 +39,20 @@ class Board extends Component {
       this.state.tableau.push(cardsInTableau);
     }
 
+  }
+
+  setStateAndAddToHistory(state) {
+      this.history.push(Object.assign({}, this.state));
+      state.historyLength = this.history.length;
+      this.setState(state);
+  }
+
+  undo() {
+      if (!this.history.length) {
+          return;
+      }
+
+      this.setState(this.history.pop());
   }
 
   /* returns a shuffled deck of cards */
@@ -74,7 +92,7 @@ class Board extends Component {
     state.waste = waste;
     state.stock = stock;
 
-    this.setState(state);
+    this.setStateAndAddToHistory(state);
   }
 
   playFromWaste(card) {
@@ -86,7 +104,7 @@ class Board extends Component {
       state.waste = waste;
     }
 
-    this.setState(state);
+    this.setStateAndAddToHistory(state);
   }
 
   playFromTableau(card, idx) {
@@ -98,61 +116,78 @@ class Board extends Component {
       state.tableau[idx] = tableau;
     }
 
-    this.setState(state);
+    this.setStateAndAddToHistory(state);
   }
 
-  _play(card, pile) {
+  _tryFoundations(card, pile, state) {
 
-    const state = Object.assign({}, this.state);
-    let moved = false;
+      const cardIdx = pile.indexOf(card);
 
-    suits.forEach(suit => {
-      if (card.suit !== suit) {
-        return;
-      }
+      suits.some(suit => {
+        if (card.suit !== suit) {
+          return false;
+        }
 
-      const foundation = state.foundations[suit].slice();
+        if (card.order - 1 !== state.foundations[suit].length) {
+          return false;
+        }
 
-      if (card.order - 1 !== foundation.length) {
-        return;
-      }
+        const newFoundation = state.foundations[suit].concat(pile.splice(cardIdx));
 
-      moved = true;
-      foundation.push(pile.pop());
-      pile[pile.length - 1].up = true;
-      state.foundations[suit] = foundation;
+        if (pile.length) {
+            pile.push(Object.assign({}, pile.pop(), {up: true}));
+        }
 
-    });
+        state.foundations[suit] = newFoundation;
 
+        return true;
 
-    state.tableau.forEach((tableau, idx) => {
-      if (moved) {
-        return;
-      }
+      });
+  }
 
-      const lastCard = tableau[tableau.length - 1];
+    _tryTableau(card, pile, state) {
 
-      if (!isOpposed(card.suit, lastCard.suit)) {
-        return;
-      }
+      const cardIdx = pile.indexOf(card);
 
-      if ((card.order === 13 && !lastCard) || (lastCard.order - 1 !== card.order)) {
-        return;
-      }
+      state.tableau.some((tableau, idx) => {
 
-      moved = true;
-      const newTableau = tableau.slice();
-      newTableau.push(pile.pop());
-      pile[pile.length - 1].up = true;
-      state.tableau[idx] = newTableau;
-    });
+        const cardIdx = tableau.indexOf(card);
+        const lastCard = tableau[tableau.length - 1];
 
-    return state;
+        if (lastCard && !isOpposed(card.suit, lastCard.suit)) {
+          return false;
+        }
 
+        if ((card.order === 13 && !lastCard) || (lastCard && lastCard.order - 1 !== card.order)) {
+          return false;
+        }
+
+        const newTableau = tableau.concat(pile.splice(cardIdx));
+        if (pile.length) {
+            pile.push(Object.assign({}, pile.pop(), {up: true}));
+        }
+        state.tableau[idx] = newTableau;
+
+        return true;
+      });
+
+    }
+
+    _play(card, pile) {
+
+      const state = Object.assign({}, this.state);
+
+      state.waste = this.state.waste.slice();
+      state.foundations = Object.assign({}, this.state.foundations);
+      state.tableau = this.state.tableau.slice();
+
+      let moved = this._tryFoundations(card, pile, state) || this._tryTableau(card, pile, state);
+
+      return state;
   }
 
   renderFoundations() {
-    return suits.map(suit => <Foundation key={suit} suit={suit} cards={this.state.foundations[suit]}/>);
+    return suits.map(suit => <Foundation key={suit} suit={suit} cards={this.state.foundations[suit]} disabled={!this.state.historyLength}/>);
   }
 
   renderTableau() {
@@ -175,9 +210,15 @@ class Board extends Component {
   render() {
     return (
       <div className="game-board">
-        <div>
-          <Stock cards={this.state.stock} onClick={ () => this.playFromStock() } />
-          <Waste cards={this.state.waste} onClick={ card => this.playFromWaste(card) } />
+        <div className="stock-container">
+            <div>
+                <Stock cards={this.state.stock} onClick={ () => this.playFromStock() } />
+                <Waste cards={this.state.waste} onClick={ card => this.playFromWaste(card) } />
+            </div>
+            <div className="controls-container">
+                <UndoButton onClick={ () => this.undo() } disabled={ !this.state.historyLength }/>
+                <button className="btn btn-block btn-danger" onClick={ this.props.reset }>Reset</button>
+            </div>
         </div>
 
         <div className="tableau-container">

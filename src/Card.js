@@ -13,14 +13,13 @@ class Card extends Component {
   constructor(props) {
     super(props);
 
-    this.up = !!this.props.up;
     this.order = this.props.order;
     this.suit = this.props.suit;
     this.rank = ranks[this.order] || this.order;
   }
 
   renderContent() {
-    if (!this.up) {
+    if (!this.props.up) {
       return;
     }
 
@@ -40,7 +39,7 @@ class Card extends Component {
 
   render() {
     const classNames = ['card', this.suit];
-    if (this.up) {
+    if (this.props.up) {
       classNames.push('up');
     }
 

@@ -11,3 +11,16 @@
   flex-direction: row;
   background-color: #34a249;
 }
+
+.stock-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.stock-container > *:first-child {
+    flex-grow: 1;
+}
+
+.controls-container {
+    padding:10px;
+}
