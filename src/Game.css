@@ -4,4 +4,10 @@
   border: 2px dashed #ccc;
   border-radius: 5px;
   margin: 10px;
+  position: relative;
+}
+
+.slot > .card {
+  left: -2px;
+  top: -2px;
 }

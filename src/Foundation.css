@@ -27,3 +27,8 @@
 .foundation.♦:before {
   content: '♦';
 }
+
+.foundation .card {
+  left: -6px;
+  top: -6px;
+}

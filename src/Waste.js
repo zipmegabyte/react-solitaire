@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import './Foundation.css';
+import './Waste.css';
 
 import Card from './Card';
 
-class Foundation extends Component {
+class Waste extends Component {
 
   renderCards() {
     return this.props.cards.map(
       (card, idx, cards) => {
-          let onClick;
+          let onClick = () => {};
 
           if (idx === cards.length - 1) {
             onClick = this.props.onClick;
@@ -29,11 +29,13 @@ class Foundation extends Component {
 
   render() {
     return (
-      <div className={`slot foundation ${this.props.suit}`}>
-        { this.renderCards() }
+      <div className="waste">
+        <div className="slot">
+          { this.renderCards() }
+        </div>
       </div>
     )
   }
 }
 
-export default Foundation;
+export default Waste;

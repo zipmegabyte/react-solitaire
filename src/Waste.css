@@ -1,0 +1,15 @@
+.waste .card + .card:nth-last-child(1) {
+  top: 25px;
+}
+
+.waste .card + .card + .card:nth-last-child(1) {
+  top: 50px;
+}
+
+.waste .card + .card:nth-last-child(2) {
+  top: 25px;
+}
+
+.waste .card:only-child {
+  top: -2px;
+}
