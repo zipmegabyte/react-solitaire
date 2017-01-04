@@ -24,7 +24,10 @@ class Tableau extends Component {
         order={ card.order }
         suit={ card.suit }
         up={ card.up }
-        onClick={ () => onClick(card, this.props.idx) }
+        onClick={ (e) => {
+          e.stopPropagation();
+          onClick(card, this.props.idx);
+        }}
       />
     )
   }

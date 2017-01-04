@@ -5,13 +5,13 @@ import Card from './Card';
 
 class Waste extends Component {
 
-  renderCards() {
+  renderCards(cards = this.props.cards.slice()) {
     return this.props.cards.map(
-      (card, idx, cards) => {
-          let onClick = () => {};
+      (card, idx) => {
+          let onClick;
 
-          if (idx === cards.length - 1) {
-            onClick = this.props.onClick;
+          if (idx === this.props.cards.length - 1) {
+            onClick = () => this.props.onClick(card);
           }
 
           return (
@@ -20,9 +20,9 @@ class Waste extends Component {
               order={ card.order }
               suit={ card.suit }
               up={ card.up }
-              onClick={ () => onClick(card) }
+              onClick={ onClick }
             />
-          );
+          )
       }
     );
   }

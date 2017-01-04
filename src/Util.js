@@ -1,4 +1,4 @@
-function shuffle(arr) {
+const shuffle = (arr) => {
   const shuffled = arr.slice();
   let currentPos = shuffled.length;
 

@@ -29,7 +29,7 @@ class Foundation extends Component {
 
   render() {
     return (
-      <div className={`slot foundation ${this.props.suit}`}>
+      <div className={`slot foundation ${this.props.suit}`} onClick={ this.props.onClick }>
         { this.renderCards() }
       </div>
     )
